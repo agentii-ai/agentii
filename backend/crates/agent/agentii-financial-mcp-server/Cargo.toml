@@ -1,0 +1,17 @@
+[package]
+name = "agentii-financial-mcp-server"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[[bin]]
+name = "agentii-financial-mcp-server"
+path = "src/main.rs"
+
+[dependencies]
+agentii-financial-tools = { path = "../agentii-financial-tools" }
+agentii-data-api = { path = "../agentii-data-api" }
+serde.workspace = true
+serde_json.workspace = true
+tokio = { workspace = true, features = ["full"] }

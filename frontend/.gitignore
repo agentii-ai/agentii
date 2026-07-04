@@ -1,0 +1,15 @@
+node_modules
+dist
+dist-ssr
+coverage
+.env.local
+.env.*.local
+playwright-report
+test-results
+*.tsbuildinfo
+*.log
+.DS_Store
+*.local
+.idea
+*.suo
+*.sw?

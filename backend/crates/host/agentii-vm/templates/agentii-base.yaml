@@ -1,0 +1,106 @@
+# agentii-base.yaml — Lima VM template for agentii sandbox VMs
+# Rendered per-project with variable substitution by base_image.rs
+#
+# Variables (replaced at render time):
+#   {{cpus}}                        - CPU count (default: 2)
+#   {{ram_mb}}                      - RAM in MiB (default: 2048)
+#   {{workspace_host_path}}         - Host path to project workspace
+#   {{persistent_volume_host_path}} - Host path to persistent volume
+#   {{mount_writable}}              - true/false based on permission tier
+#   {{iptables_rules}}              - iptables commands for network isolation
+
+images:
+  - location: "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-arm64.img"
+    arch: "aarch64"
+  - location: "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img"
+    arch: "x86_64"
+
+cpus: 2
+memory: "2048MiB"
+
+mounts:
+  - location: "{{workspace_host_path}}"
+    mountPoint: "/workspace"
+    writable: true
+    virtiofs:
+      queueSize: 1024
+  - location: "{{persistent_volume_host_path}}"
+    mountPoint: "/home/agentii.linux"
+    writable: true
+
+mountType: "virtiofs"
+
+containerd:
+  system: false
+  user: false
+
+provision:
+  - mode: system
+    script: |
+      #!/bin/bash
+      set -eux
+      # Create non-root agentii user
+      useradd -m -d /home/agentii.linux -s /bin/bash -u 1000 agentii 2>/dev/null || true
+      # Set workspace as effective home
+      echo 'export HOME=/workspace' >> /home/agentii.linux/.bashrc
+      echo 'cd /workspace' >> /home/agentii.linux/.bashrc
+      # Install base packages (only on first create, not on clone)
+      if [ ! -f /var/lib/agentii-provisioned ]; then
+        apt-get update -qq
+        apt-get install -y -qq python3 python3-pip python3-venv nodejs npm curl git jq
+        # Install uv (fast Python package manager)
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        # Install Goose CLI (default agent)
+        pip3 install goose-ai --break-system-packages
+        # Install edgartools-mcp
+        pip3 install edgartools-mcp --break-system-packages
+        # T041: Install Go 1.22+ runtime (required for OpenCode)
+        GO_VERSION="1.22.5"
+        GO_ARCH=$(uname -m | sed 's/aarch64/arm64/;s/x86_64/amd64/')
+        curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-${GO_ARCH}.tar.gz" | tar -C /usr/local -xzf -
+        ln -sf /usr/local/go/bin/go /usr/local/bin/go
+        ln -sf /usr/local/go/bin/gofmt /usr/local/bin/gofmt
+        # T041: Install Claude Code via npm
+        npm install -g @anthropic-ai/claude-code || echo "Claude Code install failed (non-fatal)"
+        # T041: Install OpenCode via go install
+        GOPATH=/usr/local/share/go /usr/local/go/bin/go install github.com/opencode-ai/opencode@latest || echo "OpenCode install failed (non-fatal)"
+        ln -sf /usr/local/share/go/bin/opencode /usr/local/bin/opencode 2>/dev/null || true
+        # T041: Install Codex via npm
+        npm install -g @openai/codex || echo "Codex install failed (non-fatal)"
+        # Cache cleanup to reduce disk size
+        apt-get clean
+        rm -rf /var/lib/apt/lists/*
+        pip3 cache purge 2>/dev/null || true
+        npm cache clean --force 2>/dev/null || true
+        rm -rf /usr/local/share/go/pkg/mod/cache 2>/dev/null || true
+        touch /var/lib/agentii-provisioned
+      fi
+  - mode: system
+    script: |
+      #!/bin/bash
+      # Create agentii-firewall systemd service
+      cat > /etc/systemd/system/agentii-firewall.service << 'SVCEOF'
+      [Unit]
+      Description=Agentii VM Firewall Rules
+      After=network.target
+
+      [Service]
+      Type=oneshot
+      RemainAfterExit=yes
+      ExecStart=/usr/local/bin/agentii-apply-firewall.sh
+
+      [Install]
+      WantedBy=multi-user.target
+      SVCEOF
+      # Create placeholder firewall script (actual rules injected at boot)
+      cat > /usr/local/bin/agentii-apply-firewall.sh << 'FWEOF'
+      #!/bin/bash
+      # Firewall rules are injected by agentii-vm at boot time
+      # This script is overwritten with actual rules on each VM start
+      echo "No firewall rules configured yet"
+      FWEOF
+      chmod +x /usr/local/bin/agentii-apply-firewall.sh
+      systemctl enable agentii-firewall.service
+
+env:
+  HOME: "/workspace"

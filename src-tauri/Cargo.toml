@@ -1,0 +1,23 @@
+[package]
+name = "agentii"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "agentii_lib"
+crate-type = ["lib", "cdylib", "staticlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon"] }
+tauri-plugin-shell = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+aes-gcm = "0.10"
+rand = "0.8"
+argon2 = "0.5"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+dirs = "5"

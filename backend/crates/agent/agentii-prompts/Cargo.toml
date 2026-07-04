@@ -1,0 +1,10 @@
+[package]
+name = "agentii-prompts"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+# Pure data crate — no agentii-core dependency to avoid circular deps
+serde = { version = "1", features = ["derive"] }

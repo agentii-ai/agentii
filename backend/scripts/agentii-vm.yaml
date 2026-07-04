@@ -1,0 +1,97 @@
+# Lima VM template for Agentii sandbox
+# Ubuntu 24.04 minimal with runtimes for agent CLIs
+
+images:
+  - location: "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img"
+    arch: "x86_64"
+  - location: "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-arm64.img"
+    arch: "aarch64"
+
+cpus: 2
+memory: "1GiB"
+disk: "10GiB"
+
+# Workspace mount via virtiofs (host project dir → /workspace)
+mounts:
+  - location: "~"
+    writable: false
+  - location: "/tmp/lima"
+    writable: true
+
+# SSH disabled — communication via limactl shell only
+ssh:
+  localPort: 0
+  forwardAgent: false
+
+# Network: configurable per permission tier
+# Default: full network (FullAuto). Override for Suggest/AutoEdit.
+networks: []
+
+# Kernel params for nested sandboxing support
+provision:
+  - mode: system
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+
+      # Enable unprivileged user namespaces (needed for bubblewrap/Landlock)
+      echo 'kernel.unprivileged_userns_clone=1' > /etc/sysctl.d/99-agentii.conf
+      sysctl -p /etc/sysctl.d/99-agentii.conf
+
+      # Update and install base dependencies
+      export DEBIAN_FRONTEND=noninteractive
+      apt-get update -qq
+      apt-get install -y -qq \
+        build-essential \
+        curl \
+        git \
+        unzip \
+        jq \
+        inotify-tools \
+        python3 \
+        python3-pip \
+        python3-venv \
+        pipx \
+        ca-certificates
+
+      # Install Node.js 22 LTS
+      curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+      apt-get install -y -qq nodejs
+
+      # Install Bun
+      curl -fsSL https://bun.sh/install | bash
+      ln -sf /root/.bun/bin/bun /usr/local/bin/bun
+
+      # Install uv (Python package manager)
+      curl -LsSf https://astral.sh/uv/install.sh | sh
+      ln -sf /root/.local/bin/uv /usr/local/bin/uv
+
+      # Install Rust toolchain
+      curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --profile minimal
+      ln -sf /root/.cargo/bin/cargo /usr/local/bin/cargo
+      ln -sf /root/.cargo/bin/rustc /usr/local/bin/rustc
+
+      # Create workspace mount point
+      mkdir -p /workspace
+
+      # Create agentii directories
+      mkdir -p /opt/agentii/mcp-servers
+      mkdir -p /opt/agentii/bin
+
+      # Install PTY broker daemon
+      # (copied from host during image build)
+
+      # No Docker daemon
+      echo "Agentii VM provisioning complete"
+
+# VM-level environment
+env:
+  TERM: "xterm-256color"
+
+# Do not mount the home directory writable by default
+mountType: "virtiofs"
+
+# Rosetta for x86 emulation on Apple Silicon
+rosetta:
+  enabled: true
+  binfmt: true

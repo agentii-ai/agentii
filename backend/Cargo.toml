@@ -1,0 +1,77 @@
+[workspace]
+resolver = "2"
+members = [
+    # Host infrastructure (existing)
+    "crates/host/agentii-vm",
+    "crates/host/agentii-pty-proxy",
+    "crates/host/agentii-gateway",
+    # Shared protocol types (existing)
+    "crates/shared/agentii-protocol",
+    # Agent core — migrated from claw-code-main
+    "crates/agent/agentii-core",
+    "crates/agent/agentii-api",
+    "crates/agent/agentii-tools",
+    "crates/agent/agentii-commands",
+    "crates/agent/agentii-plugins",
+    "crates/agent/agentii-telemetry",
+    "crates/agent/agentii-cli",
+    "crates/agent/agentii-mock-service",
+    "crates/agent/agentii-compat-harness",
+    # Agent core — new agentii-specific crates
+    "crates/agent/agentii-financial-tools",
+    "crates/agent/agentii-financial-mcp-server",
+    "crates/agent/agentii-data-api",
+    "crates/agent/agentii-prompts",
+    "crates/agent/agentii-financial-memory",
+    "crates/agent/agentii-gateway-bridge",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+publish = false
+repository = "https://github.com/agentii-ai/agenzym"
+
+[workspace.dependencies]
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+thiserror = "2"
+anyhow = "1"
+async-trait = "0.1"
+futures = "0.3"
+uuid = { version = "1", features = ["v4", "serde"] }
+tokio-tungstenite = "0.24"
+reqwest = { version = "0.12", features = ["json", "stream"] }
+secrecy = { version = "0.10", features = ["serde"] }
+sha2 = "0.10"
+clap = { version = "4", features = ["derive"] }
+toml = "0.8"
+rusqlite = { version = "0.32", features = ["bundled", "vtab"] }
+portable-pty = "0.8"
+notify = "7"
+keyring = "3"
+hyper = { version = "1", features = ["full"] }
+tokio-util = { version = "0.7", features = ["rt"] }
+regex = "1"
+walkdir = "2"
+glob = "0.3"
+chrono = { version = "0.4", features = ["serde"] }
+crossterm = "0.28"
+pulldown-cmark = "0.13"
+rustyline = "15"
+syntect = "5"
+flate2 = "1"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+module_name_repetitions = "allow"
+missing_panics_doc = "allow"
+missing_errors_doc = "allow"

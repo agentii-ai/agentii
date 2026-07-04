@@ -1,0 +1,19 @@
+[package]
+name = "agentii-pty-proxy"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "WebSocket PTY relay between frontend xterm.js and sandbox VM PTYs"
+
+[dependencies]
+tokio = { workspace = true }
+tokio-tungstenite = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+thiserror = { workspace = true }
+uuid = { workspace = true }
+futures = { workspace = true }
+async-trait = { workspace = true }
+portable-pty = { workspace = true }
+agentii-protocol = { path = "../../shared/agentii-protocol" }

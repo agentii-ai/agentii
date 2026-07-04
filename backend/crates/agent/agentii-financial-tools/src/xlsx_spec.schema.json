@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentii.ai/schemas/xlsx_spec.schema.json",
+  "title": "xlsx_spec",
+  "description": "Canonical contract between skill methodology and office-plane execution. Frozen at v1.0. Vendored from spec 023 models-and-pitches/contracts/xlsx_spec.schema.json.",
+  "type": "object",
+  "required": ["model_kind", "spec_version", "ticker"],
+  "properties": {
+    "model_kind": {
+      "type": "string",
+      "enum": ["dcf", "comps", "3-statement", "lbo", "audit-target", "custom"],
+      "description": "Financial model type discriminator. 'custom' requires method='script'."
+    },
+    "spec_version": {
+      "type": "string",
+      "description": "Schema version. v1.0 frozen. Backward-incompatible changes require major version bump.",
+      "default": "1.0"
+    },
+    "ticker": {
+      "type": "string",
+      "description": "Primary company ticker. Canonical key per spec 021 FR-030."
+    },
+    "title": {
+      "type": "string",
+      "description": "Optional display title for the workbook."
+    },
+    "peers": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Peer tickers for comps analysis. Required when model_kind='comps'."
+    },
+    "projection_years": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Column header labels for projection periods (e.g., ['FY2026E', 'FY2027E'])."
+    },
+    "assumptions": {
+      "type": "object",
+      "description": "Key financial assumptions driving the model.",
+      "properties": {
+        "revenue_growth": { "type": "array", "items": { "type": "number" } },
+        "ebitda_margin": {},
+        "wacc": { "type": "number" },
+        "terminal_growth": { "type": "number" },
+        "terminal_ev_ebitda": { "type": "number" },
+        "tax_rate": { "type": "number" },
+        "da_pct": { "type": "number" },
+        "capex_pct": { "type": "number" },
+        "exit_multiple": { "type": "number" },
+        "entry_multiple": { "type": "number" },
+        "holding_period": { "type": "integer" }
+      }
+    },
+    "revenue": {
+      "type": "array",
+      "items": { "type": "number" },
+      "description": "Revenue projections per projection year."
+    },
+    "operating_metrics": {
+      "type": "object",
+      "description": "Per-company operating metrics for comps (revenue, growth, margins, EBITDA)."
+    },
+    "valuation_multiples": {
+      "type": "object",
+      "description": "Per-company valuation multiples for comps (market_cap, ev, ev_revenue, ev_ebitda, pe_ratio)."
+    },
+    "income_statement": {
+      "type": "object",
+      "description": "IS data for 3-statement model."
+    },
+    "balance_sheet": {
+      "type": "object",
+      "description": "BS data for 3-statement model."
+    },
+    "sheets": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/sheet" },
+      "description": "Sheet definitions (for custom model_kind, used by method='script')."
+    },
+    "named_ranges": {
+      "type": "object",
+      "description": "Named range to cell reference mappings."
+    }
+  },
+  "definitions": {
+    "sheet": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "columns": { "type": "array", "items": { "type": "object" } },
+        "rows": { "type": "array", "items": { "type": "object" } },
+        "merges": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

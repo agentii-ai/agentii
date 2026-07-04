@@ -1,0 +1,33 @@
+[package]
+name = "agentii-gateway"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "WebSocket routing gateway for Agentii (terminal + agent channels)"
+
+[[bin]]
+name = "agentii-gateway"
+path = "src/main.rs"
+
+[dependencies]
+tokio = { workspace = true }
+tokio-tungstenite = { workspace = true }
+hyper = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+thiserror = { workspace = true }
+futures = { workspace = true }
+uuid = { workspace = true }
+sha2 = { workspace = true }
+clap = { version = "4", features = ["derive"] }
+reqwest = { workspace = true, features = ["json"] }
+tokio-util = { workspace = true }
+agentii-protocol = { path = "../../shared/agentii-protocol" }
+agentii-pty-proxy = { path = "../agentii-pty-proxy" }
+agentii-vm = { path = "../agentii-vm" }
+agentii-gateway-bridge = { path = "../../agent/agentii-gateway-bridge" }
+agentii-financial-memory = { path = "../../agent/agentii-financial-memory" }
+notify = { version = "7", default-features = false, features = ["macos_fsevent"] }
+notify-debouncer-mini = "0.5"

@@ -1,0 +1,123 @@
+@import 'tailwindcss';
+
+@theme {
+  /* ── Structured Radiance — navy-black dark theme ── */
+  --color-background: #0d1117;
+  --color-foreground: #e2e8f0;
+
+  --color-card: #131a24;
+  --color-card-foreground: #e2e8f0;
+
+  --color-popover: #131a24;
+  --color-popover-foreground: #e2e8f0;
+
+  --color-primary: #3b82f6;
+  --color-primary-foreground: #ffffff;
+
+  --color-secondary: #2dd4a8;
+  --color-secondary-foreground: #ffffff;
+
+  --color-accent: #8b5cf6;
+  --color-accent-foreground: #ffffff;
+
+  --color-muted: #1a2332;
+  --color-muted-foreground: #7088a4;
+
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+
+  --color-border: #1e2d3d;
+  --color-input: #1e2d3d;
+  --color-ring: #3b82f6;
+
+  --color-sidebar: #0d1117;
+  --color-sidebar-foreground: #e2e8f0;
+  --color-sidebar-accent: #1a2332;
+  --color-sidebar-accent-foreground: #e2e8f0;
+  --color-sidebar-border: #1e2d3d;
+
+  --color-chart-1: #3b82f6;
+  --color-chart-2: #2dd4a8;
+  --color-chart-3: #f97316;
+  --color-chart-4: #8b5cf6;
+  --color-chart-5: #f43e5e;
+
+  /* Extended palette */
+  --color-neon-violet: #a855f7;
+  --color-neon-cyan: #22d3ee;
+  --color-teal: #2dd4a8;
+  --color-surface-glass: #111922;
+
+  /* Sharp geometric corners */
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+
+  /* Typography */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Animations */
+  --animate-pulse-glow: pulse-glow 3s ease-in-out infinite;
+  --animate-float: float 6s ease-in-out infinite;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+  }
+}
+
+/* ── Glassmorphism ── */
+.glass {
+  background: rgba(17, 25, 34, 0.6);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(30, 45, 61, 0.4);
+}
+
+/* ── Glow effects ── */
+.glow-primary {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3), 0 0 60px rgba(59, 130, 246, 0.1);
+}
+
+.glow-violet {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3), 0 0 60px rgba(168, 85, 247, 0.1);
+}
+
+.glow-teal {
+  box-shadow: 0 0 20px rgba(45, 212, 168, 0.3), 0 0 60px rgba(45, 212, 168, 0.1);
+}
+
+.glow-text-primary {
+  text-shadow: 0 0 40px rgba(59, 130, 246, 0.4);
+}
+
+/* ── Gradient mesh background ── */
+.gradient-mesh {
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 0%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 100%, rgba(45, 212, 168, 0.08) 0%, transparent 50%),
+    #0d1117;
+}
+
+/* ── Lattice grid line ── */
+.lattice-line {
+  background: rgba(30, 45, 61, 0.3);
+}
+
+/* ── Keyframes ── */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}

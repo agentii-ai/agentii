@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Rust build artifacts
+target/
+
+# Environment files
+.env*
+!.env.example
+
+# Internal agent data
+.backend/.agentii/sessions/
+backend/.agentii/
+backend/crates/.clawd-agents/
+.claw/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Tauri
+frontend/src-tauri/target/

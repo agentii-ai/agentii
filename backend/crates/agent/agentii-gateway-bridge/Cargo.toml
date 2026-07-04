@@ -1,0 +1,14 @@
+[package]
+name = "agentii-gateway-bridge"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+agentii-protocol = { path = "../../shared/agentii-protocol" }
+serde = { version = "1", features = ["derive"] }
+serde_json.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+thiserror.workspace = true

@@ -1,0 +1,40 @@
+[package]
+name = "agentii-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "agentii"
+path = "src/main.rs"
+
+[dependencies]
+agentii-api = { path = "../agentii-api" }
+agentii-commands = { path = "../agentii-commands" }
+agentii-compat-harness = { path = "../agentii-compat-harness" }
+crossterm = "0.28"
+ratatui = "0.29"
+pulldown-cmark = "0.13"
+rustyline = "15"
+agentii-core = { path = "../agentii-core" }
+agentii-plugins = { path = "../agentii-plugins" }
+serde = { version = "1", features = ["derive"] }
+serde_json.workspace = true
+syntect = "5"
+tokio = { version = "1", features = ["rt-multi-thread", "signal", "time"] }
+agentii-tools = { path = "../agentii-tools" }
+agentii-financial-memory = { path = "../agentii-financial-memory" }
+agentii-financial-tools = { path = "../agentii-financial-tools" }
+agentii-prompts = { path = "../agentii-prompts" }
+tokio-tungstenite = { workspace = true }
+futures = { workspace = true }
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+agentii-mock-service = { path = "../agentii-mock-service" }
+serde_json.workspace = true
+tokio = { version = "1", features = ["rt-multi-thread"] }
+

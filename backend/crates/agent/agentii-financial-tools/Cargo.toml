@@ -1,0 +1,15 @@
+[package]
+name = "agentii-financial-tools"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+agentii-data-api = { path = "../agentii-data-api" }
+regex = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+which = "7"
